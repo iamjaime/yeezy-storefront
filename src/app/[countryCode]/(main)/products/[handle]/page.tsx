@@ -60,15 +60,20 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     notFound()
   }
 
-  return {
-    title: `${product.title} | Medusa Store`,
+  const metadata = {
+    title: `${product.title} | YEEZY`,
     description: `${product.title}`,
-    openGraph: {
-      title: `${product.title} | Medusa Store`,
+  } as Metadata
+
+  if (product.thumbnail) {
+    metadata.openGraph = {
+      title: `${product.title} | YEEZY`,
       description: `${product.title}`,
       images: product.thumbnail ? [product.thumbnail] : [],
-    },
+    }
   }
+
+  return metadata
 }
 
 export default async function ProductPage(props: Props) {

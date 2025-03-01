@@ -89,10 +89,9 @@ const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
                           )}
                         />
                       </div>
-                      <Text className="flex justify-between txt-compact-small">
-                        © {new Date().getFullYear()} Medusa Store. All rights
-                        reserved.
-                      </Text>
+                      <div className="flex flex-col gap-y-3 text-small-regular">
+                        <span>© {new Date().getFullYear()} YEEZY. All rights reserved.</span>
+                      </div>
                     </div>
                   </div>
                 </PopoverPanel>

@@ -10,10 +10,10 @@ import { notFound } from "next/navigation"
 import { listRegions } from "@lib/data/regions"
 import { retrieveCustomer } from "@lib/data/customer"
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "Profile",
-  description: "View and edit your Medusa Store profile.",
-}
+  description: "View and edit your YEEZY profile.",
+} as Metadata
 
 export default async function Profile() {
   const customer = await retrieveCustomer()
