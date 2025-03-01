@@ -38,7 +38,7 @@ const Hero = () => {
   ]
 
   return (
-    <div ref={containerRef} className="relative h-screen w-full overflow-hidden bg-black">
+    <div ref={containerRef} className="h-screen w-full overflow-hidden bg-black">
       {/* Grid Container */}
       <div className="absolute inset-0 grid grid-cols-2 md:grid-cols-4 gap-1 p-1">
         {/* Grid Items */}

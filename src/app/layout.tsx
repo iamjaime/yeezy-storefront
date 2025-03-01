@@ -43,7 +43,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
             </div>
           </div>
         </header>
-        <main className="relative pt-16">
+        <main className="relative h-screen pt-16">
           {props.children}
         </main>
         <footer className="bg-black text-white py-16">
