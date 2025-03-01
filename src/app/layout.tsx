@@ -5,6 +5,8 @@ import "styles/globals.css"
 import { Suspense } from "react"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import CartButton from "@modules/layout/components/cart-button"
+import Account from "@modules/common/icons/account"
+import ShoppingBag from "@modules/common/icons/shopping-bag"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -25,22 +27,18 @@ export default function RootLayout(props: { children: React.ReactNode }) {
             <LocalizedClientLink href="/" className="text-2xl font-bold tracking-tighter hover:text-ui-fg-base">
               YEEZY
             </LocalizedClientLink>
-            <nav className="hidden md:flex space-x-8">
-              <a href="#" className="nav-link">Collections</a>
-              <LocalizedClientLink href="/store" className="nav-link">Shop</LocalizedClientLink>
-              <a href="#" className="nav-link">About</a>
-              <a href="#" className="nav-link">Contact</a>
-            </nav>
-            <div className="flex items-center space-x-6">
-              <LocalizedClientLink href="/account" className="nav-link">
-                Account
-              </LocalizedClientLink>
+            <div className="flex items-center">
+              {/* <LocalizedClientLink href="/account" className="w-12 h-12 flex items-center justify-center hover:text-gray-600">
+                <Account size={24} />
+              </LocalizedClientLink> */}
               <Suspense fallback={
-                <LocalizedClientLink href="/cart" className="nav-link">
-                  Cart (0)
-                </LocalizedClientLink>
+                <div className="w-12 h-12 flex items-center justify-center">
+                  <ShoppingBag size={24} />
+                </div>
               }>
-                <CartButton />
+                <div className="w-12 h-12 flex items-center justify-center">
+                  <CartButton />
+                </div>
               </Suspense>
             </div>
           </div>
