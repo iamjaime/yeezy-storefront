@@ -21,7 +21,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
     <html lang="en" data-mode="light" className={`${inter.variable}`}>
       <body className="min-h-screen bg-white text-black">
         <header className="fixed w-full top-0 bg-white/90 backdrop-blur-sm z-50 border-b border-gray-200">
-          <div className="content-container py-4 flex items-center justify-between">
+          <div className="content-container h-16 flex items-center justify-between">
             <LocalizedClientLink href="/" className="text-2xl font-bold tracking-tighter hover:text-ui-fg-base">
               YEEZY
             </LocalizedClientLink>
@@ -45,7 +45,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
             </div>
           </div>
         </header>
-        <main className="relative pt-20 min-h-screen">
+        <main className="relative pt-16">
           {props.children}
         </main>
         <footer className="bg-black text-white py-16">
