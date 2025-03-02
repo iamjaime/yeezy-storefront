@@ -1,11 +1,15 @@
 "use client"
 
 import { Heading, Text, clx } from "@medusajs/ui"
-
-import PaymentButton from "../payment-button"
 import { useSearchParams } from "next/navigation"
 
-const Review = ({ cart }: { cart: any }) => {
+const Review = ({ 
+  cart,
+  children 
+}: { 
+  cart: any
+  children?: React.ReactNode
+}) => {
   const searchParams = useSearchParams()
 
   const isOpen = searchParams.get("step") === "review"
@@ -45,7 +49,7 @@ const Review = ({ cart }: { cart: any }) => {
               </Text>
             </div>
           </div>
-          <PaymentButton cart={cart} data-testid="submit-order-button" />
+          {children}
         </>
       )}
     </div>

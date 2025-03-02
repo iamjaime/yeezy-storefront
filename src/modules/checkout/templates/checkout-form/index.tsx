@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation"
 import { Heading, Button } from "@medusajs/ui"
 import { listCartShippingMethods } from "@lib/data/fulfillment"
 import { listCartPaymentMethods } from "@lib/data/payment"
+import { placeOrder } from "@lib/data/cart"
 import { HttpTypes } from "@medusajs/types"
 import Addresses from "@modules/checkout/components/addresses"
 import Payment from "@modules/checkout/components/payment"
@@ -67,6 +68,15 @@ const CheckoutForm = ({
     loadMethods()
   }, [cart])
 
+  const handlePlaceOrder = async () => {
+    try {
+      await placeOrder(cart.id)
+    } catch (error) {
+      console.error("Error placing order:", error)
+      setError("Failed to place order. Please try again.")
+    }
+  }
+
   if (!cart || isLoading) {
     return (
       <div className="flex items-center justify-center h-full py-12">
@@ -115,26 +125,21 @@ const CheckoutForm = ({
           <Payment cart={cart} availablePaymentMethods={paymentMethods} />
         </div>
 
-        <div className="px-4 small:px-8">
-          <Heading level="h2" className="text-xl-semi mb-4">
-            Pay with Solana
-          </Heading>
-          <div className="bg-white p-4 rounded-lg">
-            <SolanaPayButton
-              amount={cart.total || 0}
-              onSuccess={() => {
-                // Handle successful payment
-                console.log("Payment successful!")
-              }}
-              onError={(error) => {
-                // Handle payment error
-                console.error("Payment failed:", error)
-              }}
+        <div>
+          <Review cart={cart}>
+            <div className="mt-4">
+            
+            <SolanaPayButton 
+              amount={10}
+              onPlaceOrder={() => {}}
+              useSplToken={true}
+              splTokenAddress="4E8Y48BCK1CDEaupUXW3xH9Hd6bZZdb4qBeRxfqeq3Md"  // USDC address
+              splTokenTicker="LTHOT"
+              splTokenDecimals={6}  // USDC has 6 decimals
             />
-          </div>
+            </div>
+          </Review>
         </div>
-
-        <Review cart={cart} />
       </div>
     </div>
   )
