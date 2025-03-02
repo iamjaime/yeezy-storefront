@@ -37,11 +37,11 @@ const SolanaPayButton = ({
   const isReviewStep = searchParams.get('step') === 'review'
   const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768
 
-  // You can change this to mainnet-beta for production
+  // Use QuickNode endpoint for better reliability
   const connection = useMemo(
-    () => new Connection(clusterApiUrl('devnet'), {
+    () => new Connection('https://compatible-cosmopolitan-river.solana-devnet.quiknode.pro/c9d2c4e017b73d0847929bbba07ef26b11ad1266/', {
       commitment: 'confirmed',
-      wsEndpoint: clusterApiUrl('devnet').replace('https', 'wss')
+      wsEndpoint: 'wss://compatible-cosmopolitan-river.solana-devnet.quiknode.pro/c9d2c4e017b73d0847929bbba07ef26b11ad1266/'
     }),
     []
   )
@@ -57,54 +57,65 @@ const SolanaPayButton = ({
     setIsChecking(false)
   }
 
-  // Monitor payment
+  // Monitor payment using WebSocket subscription only
   useEffect(() => {
     if (!reference || !showQR) return
 
-    let timeoutId: NodeJS.Timeout
-    let isCheckingPayment = false
-    
-    const checkPayment = async () => {
-      if (isCheckingPayment) return
-      
-      isCheckingPayment = true
-      try {
-        console.log('Checking payment status...')
-        const signatureInfo = await findReference(connection, reference, { finality: 'confirmed' })
-        
-        await validateTransfer(
-          connection,
-          signatureInfo.signature,
-          {
-            recipient: shopAddress,
-            amount: new BigNumber(amount).multipliedBy(Math.pow(10, splTokenDecimals)),
-            reference,
-            ...(useSplToken && splTokenAddress ? { splToken: new PublicKey(splTokenAddress) } : {})
-          }
-        )
+    console.log('Setting up payment monitoring for reference:', reference.toString())
+    console.log('Monitoring shop address:', shopAddress.toString())
+    setIsChecking(true)
 
-        handlePaymentSuccess()
-      } catch (error) {
-        // Only log non-"not found" errors
-        if (!(error instanceof Error) || !error.message.includes('not found')) {
-          console.error('Error monitoring payment:', error)
-        } else {
-          console.log('Payment not found, will check again in 60 seconds')
-        }
-        isCheckingPayment = false
-        // Retry after 60 seconds
-        timeoutId = setTimeout(checkPayment, 60000)
-      }
+    let subscriptionId: number | null = null
+
+    // Subscribe to shop account changes
+    const setupSubscription = async () => {
+      subscriptionId = connection.onAccountChange(
+        shopAddress,
+        async (updatedAccountInfo) => {
+          console.log(`Account update received for ${shopAddress.toString()}:`, {
+            lamports: updatedAccountInfo.lamports / LAMPORTS_PER_SOL,
+            data: updatedAccountInfo.data
+          })
+
+          try {
+            const signatureInfo = await findReference(connection, reference, { finality: 'confirmed' })
+            console.log('Found signature:', signatureInfo.signature)
+
+            await validateTransfer(
+              connection,
+              signatureInfo.signature,
+              {
+                recipient: shopAddress,
+                amount: new BigNumber(amount).multipliedBy(Math.pow(10, splTokenDecimals)),
+                reference,
+                ...(useSplToken && splTokenAddress ? { splToken: new PublicKey(splTokenAddress) } : {})
+              },
+              { commitment: 'confirmed' }
+            )
+            console.log('Payment validated successfully!')
+            handlePaymentSuccess()
+          } catch (error) {
+            // Only log non-"not found" errors
+            if (!(error instanceof Error) || !error.message.includes('not found')) {
+              console.error('Error validating payment:', error)
+            }
+          }
+        },
+        'confirmed'
+      )
+
+      console.log('Started WebSocket subscription with ID:', subscriptionId)
     }
 
-    // Initial check
-    checkPayment()
+    setupSubscription()
 
     return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId)
+      if (subscriptionId !== null) {
+        console.log('Cleaning up payment monitoring... Subscription ID:', subscriptionId)
+        connection.removeAccountChangeListener(subscriptionId)
+        subscriptionId = null
       }
-      isCheckingPayment = false
+      setIsChecking(false)
     }
   }, [reference, showQR, connection, shopAddress, amount, useSplToken, splTokenAddress, splTokenDecimals])
 
@@ -191,8 +202,13 @@ const SolanaPayButton = ({
                 <div className="text-center mb-4">
                   <h3 className="text-xl font-semibold mb-2">Payment Details</h3>
                   <p className="text-gray-600">
-                    Scan the QR code or send payment directly:
+                    {isChecking ? 'Waiting for payment confirmation...' : 'Scan the QR code or send payment directly:'}
                   </p>
+                  {isChecking && (
+                    <div className="mt-2 text-sm text-blue-600">
+                      Transaction is being processed...
+                    </div>
+                  )}
                 </div>
                 <div className="w-full h-[300px] mb-4">
                   <div ref={qrRef} className="w-full h-full flex items-center justify-center" />
@@ -214,6 +230,7 @@ const SolanaPayButton = ({
                 </div>
                 <Button
                   onClick={() => {
+                    console.log('Canceling payment and closing WebSocket...')
                     setShowQR(false)
                     setQrCode(null)
                     setReference(null)
