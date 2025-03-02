@@ -88,7 +88,7 @@ const CartDropdown = ({
             data-testid="nav-cart-link"
           >
             <ShoppingBag />
-            <span>{`(${totalItems})`}</span>
+            {totalItems > 0 && <span>{totalItems}</span>}
           </LocalizedClientLink>
         </PopoverButton>
         <Transition
