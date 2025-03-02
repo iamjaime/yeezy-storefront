@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en" data-mode="light" className={`${inter.variable}`}>
-      <body className="min-h-screen bg-white text-black">
+      <body className="flex flex-col min-h-screen bg-white text-black">
         <header className="fixed w-full top-0 bg-white/90 backdrop-blur-sm z-50 border-b border-gray-200">
           <div className="content-container h-16 flex items-center justify-between">
             <LocalizedClientLink href="/" className="text-2xl font-bold tracking-tighter hover:text-ui-fg-base">
@@ -43,10 +43,10 @@ export default function RootLayout(props: { children: React.ReactNode }) {
             </div>
           </div>
         </header>
-        <main className="relative h-screen pt-16">
+        <main className="flex-1 pt-16">
           {props.children}
         </main>
-        <footer className="bg-black text-white py-16">
+        <footer className="mt-auto bg-black text-white py-16">
           <div className="content-container">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               <div>
