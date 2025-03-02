@@ -27,7 +27,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
   }
 
   return (
-    <>
+    <div className="flex flex-col">
       <div
         className="content-container flex flex-col small:flex-row small:items-start py-6 relative"
         data-testid="product-container"
@@ -62,7 +62,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
           <RelatedProducts product={product} countryCode={countryCode} />
         </Suspense>
       </div>
-    </>
+    </div>
   )
 }
 

@@ -41,11 +41,9 @@ const nextConfig = {
         hostname: "images.unsplash.com",
       },
       {
-        protocol: 'http',
-        hostname: '15.223.26.240',
-        port: '9000',
-        pathname: '/static/**',
-      },
+        protocol: "http",
+        hostname: "images.unsplash.com",
+      }
     ],
   },
 }
